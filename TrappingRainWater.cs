@@ -2,16 +2,57 @@
 
 public class TrappingRainWater
 {
+    private List<Range> _pools = new List<Range>();
     public int Trap(int[] height)
     {
-        int leftPointer = 0, rightPointer = 1;
+        InnerIteration(height);
+        return _pools.Count;
+    }
 
-        while (leftPointer < height.Length)
+    private void InnerIteration(int[] array)
+    {
+        var heighestIndex = -1;
+
+        var leftMost = array;
+        while (TryFindHighest(leftMost, ref heighestIndex))
         {
-            var leftHeight = height[leftPointer];
-            var rightHeight = height[rightPointer];
+            var rightMost = SplitAt(ref leftMost, heighestIndex);
+
+            SearchForPools(leftMost);
+            SearchForPools(rightMost);
+
+            InnerIteration(leftMost);
+            InnerIteration(rightMost);
+        }
+    }
+
+    private bool TryFindHighest(int[] array, ref int highestIndex)
+    {
+        if (array.Length < 3) { return false; }
+
+        var maxi = int.MinValue;
+        for (int i = 0; i < array.Length; i++)
+        {
+            if (array[i] > maxi)
+            {
+                maxi = array[i];
+                highestIndex = i;
+            }
         }
 
-        return 0;
+        return true;
+    }
+
+    private int[] SplitAt(ref int[] original, int pivot)
+    {
+        var p = pivot + 1;
+        var tmp = original[p..];
+        original = original[..pivot];
+        return tmp;
+    }
+
+    private void SearchForPools(int[] array)
+    {
+
     }
 }
